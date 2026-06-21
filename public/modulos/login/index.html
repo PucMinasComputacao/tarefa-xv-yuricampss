@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Entrar — Café Raízes</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="login-wrapper">
+      <div class="login-card">
+        <div class="login-logo">☕ Café Raízes</div>
+        <p class="login-subtitulo">Entre para salvar seus favoritos</p>
+
+        <div class="campo">
+          <label for="login">Login</label>
+          <input
+            type="text"
+            id="login"
+            placeholder="seu login"
+            autocomplete="username"
+          />
+        </div>
+
+        <div class="campo">
+          <label for="senha">Senha</label>
+          <input
+            type="password"
+            id="senha"
+            placeholder="••••••"
+            autocomplete="current-password"
+          />
+        </div>
+
+        <button class="btn-primario" id="btn-entrar">Entrar</button>
+
+        <div class="msg-erro" id="msg-erro">Login ou senha incorretos.</div>
+      </div>
+    </div>
+
+    <script src="/assets/js/login.js"></script>
+    <script>
+      const sessao = sessionStorage.getItem("usuarioCorrente");
+      if (sessao) {
+        window.location.href = "/index.html";
+      }
+
+      document.getElementById("btn-entrar").addEventListener("click", async () => {
+        const login = document.getElementById("login").value.trim();
+        const senha = document.getElementById("senha").value.trim();
+        const msgErro = document.getElementById("msg-erro");
+
+        if (!login || !senha) {
+          msgErro.textContent = "Preencha login e senha.";
+          msgErro.classList.add("visivel");
+          return;
+        }
+
+        msgErro.classList.remove("visivel");
+
+        const ok = await loginUser(login, senha);
+
+        if (ok) {
+          window.location.href = "/index.html";
+        } else {
+          msgErro.textContent = "Login ou senha incorretos.";
+          msgErro.classList.add("visivel");
+        }
+      });
+
+      document.getElementById("senha").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") document.getElementById("btn-entrar").click();
+      });
+    </script>
+  </body>
+</html>

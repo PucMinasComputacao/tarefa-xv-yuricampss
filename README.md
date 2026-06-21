@@ -1,26 +1,56 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/_PLVIDG8)
-Trabalho Prático - Semana 15
+
+# Trabalho Prático — Semana 15
+## Personalização do site com Integração de Login de Usuário
+
+**Aluno:** Yuri Campos Silva
+**Matrícula:** 907001
+
+---
+
+## Como executar
+
+```bash
+npx json-server --watch db.json --port 3000 --static public
+```
+
+Acesse: **http://localhost:3000**
+
+| Login | Senha |
+|-------|-------|
+| admin | 123   |
+| user  | 123   |
+
+---
+
+## Funcionalidades implementadas
+
+- ✅ Login com validação via JSON Server (`/usuarios`)
+- ✅ Sessão mantida via `sessionStorage` (objeto `usuarioCorrente`)
+- ✅ Navbar exibe **"Olá, [nome] | Sair"** quando logado, ou link **"Entrar"** quando não logado
+- ✅ Redirecionamento automático para `/modulos/login/index.html` se não autenticado
+- ✅ Logout via `logoutUser()` apaga sessão e redireciona para o login
+- ✅ Favoritar/desfavoritar itens — bloqueado com mensagem se não estiver logado
+- ✅ Favoritos persistidos por usuário em `localStorage` com chave `favoritos_<idDoUsuario>`
+- ✅ Cards favoritados ficam marcados visualmente (ícone ♥ preenchido + borda destacada)
+- ✅ Página **Meus Favoritos** (`/pages/favoritos.html`) lista apenas os itens salvos do usuário logado
+
+---
 
 
-Personalização do site com Integração de Login de Usuário
-Nesta atividade, vamos integrar ao projeto o módulo de login, cujo código já é fornecido com o repositório compartilhado para a atividade. A partir dessa integração, vamos implementar uma funcionalidade adicional de personalização para marcação e exibição de itens favoritos.
+## Prints
 
-A seguir, apresentamos mais detalhes sobre o módulo de login, seu funcionamento e como você pode integrar novas funcionalidades no seu projeto.
+### Home com usuário logado
 
-Módulo de Login
-O módulo de login de usuário, fornecido no repositório da atividade, inclui funcionalidades como o formulário de registro de usuários e o processo de validação de login e senha.
+<!-- Substitua pela sua captura de tela -->
+![Home com usuário logado]![alt text](image.png) ![alt text](image-1.png)
 
-Para utilizar o módulo de login, basta incluir o script de login na sua home-page (index.html), colocando a seguinte tag dentro do elemento HEAD:
+### Itens favoritados marcados
 
-<script src="./assets/js/login.js"><script>
-Os dados de usuários são carregados a partir do JSON Server quando o script de login inicializa, usando fetch('/usuarios') dentro da função initLoginApp() localizada no arquivo login.js. Inicialmente o banco de dados é configurado com dois usuários:
+<!-- Substitua pela sua captura de tela -->
+![Itens favoritados] 
 
-Login: admin | Senha: 123
-Login: user | Senha: 123
-A dinâmica de funcionamento do módulo de login é a seguinte:
+### Página Meus Favoritos
 
-Ao carregar a Home-page, o script verifica se o usuário já efetuou login. Em caso negativo, o navegador é direcionado para o formulário de validação de login e senha (/modulos/login/index.html). 
-Quando o usuário informa login e senha, a função loginUser(login, senha) procura o usuário nos dados e valida a senha. Se a senha estiver correta, o script monta o objeto usuarioCorrente,  salva no sessionStorage e direciona o Navegador para a Home-Page (index.html). O objeto usuarioCorrente tem os seguintes atributos: id, nome, login, senha e email.
-Uma vez carregada a home-page com o usuário validado, pode-se personalizar a apresentação para exibir os dados do usuário logado via dados mantidos no objeto usuarioCorrente.
-Para fazer logoff, a função logoutUser() apaga os dados do objeto usuarioCorrente no sessionStorage, redirecionando o Navegador para o formulário de validação de login e senha.
-💡 Você pode alterar a dinâmica básica utilizando as funções disponíveis e documentadas no arquivo login.js.
+<!-- Substitua pela sua captura de tela -->
+![Meus Favoritos]![alt text](image-2.png)

@@ -1,0 +1,62 @@
+{
+  "usuarios": [
+    {
+      "id": 1,
+      "nome": "Administrador",
+      "login": "admin",
+      "senha": "123",
+      "email": "admin@site.com"
+    },
+    {
+      "id": 2,
+      "nome": "Usuário Padrão",
+      "login": "user",
+      "senha": "123",
+      "email": "user@site.com"
+    }
+  ],
+  "itens": [
+    {
+      "id": 1,
+      "titulo": "Café Especial Etiópia",
+      "descricao": "Grãos de altitude com notas de frutas vermelhas e chocolate amargo.",
+      "imagem": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=80",
+      "categoria": "Grão"
+    },
+    {
+      "id": 2,
+      "titulo": "Espresso Brasileiro",
+      "descricao": "Blend encorpado de fazendas do Sul de Minas, com crema dourada.",
+      "imagem": "https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=400&q=80",
+      "categoria": "Espresso"
+    },
+    {
+      "id": 3,
+      "titulo": "Cold Brew Colombiano",
+      "descricao": "Extração a frio por 24h, suave e refrescante com acidez cítrica.",
+      "imagem": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&q=80",
+      "categoria": "Cold Brew"
+    },
+    {
+      "id": 4,
+      "titulo": "Cappuccino Clássico",
+      "descricao": "Espresso equilibrado com leite vaporizado e espuma cremosa.",
+      "imagem": "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=400&q=80",
+      "categoria": "Leite"
+    },
+    {
+      "id": 5,
+      "titulo": "Café de Origem Guatemala",
+      "descricao": "Perfil floral e achocolatado, cultivado em vulcões com solos ricos.",
+      "imagem": "https://images.unsplash.com/photo-1497515114629-f71d768fd07c?w=400&q=80",
+      "categoria": "Grão"
+    },
+    {
+      "id": 6,
+      "titulo": "Latte Art Caramelo",
+      "descricao": "Espresso suave com calda de caramelo artesanal e leite cremoso.",
+      "imagem": "https://images.unsplash.com/photo-1561882468-9110e03e0f78?w=400&q=80",
+      "categoria": "Leite"
+    }
+  ]
+}

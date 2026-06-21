@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meus Favoritos — Café Raízes</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <script src="/assets/js/login.js"></script>
+    <script src="/assets/js/favoritos.js"></script>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="navbar-inner">
+          <a href="/index.html" class="navbar-logo">☕ Café <span>Raízes</span></a>
+
+          <ul class="navbar-nav">
+            <li><a href="/index.html">Catálogo</a></li>
+            <li><a href="/pages/favoritos.html">Meus Favoritos</a></li>
+          </ul>
+
+          <div class="navbar-user" id="area-usuario"></div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="secao-catalogo">
+      <h2 class="secao-titulo">Meus Favoritos</h2>
+      <div class="grid-cards" id="grid-favoritos">
+        <p style="color:var(--cor-texto-suave)">Carregando...</p>
+      </div>
+    </main>
+
+    <footer>
+      <p>© 2025 Café Raízes · Projeto acadêmico</p>
+    </footer>
+
+    <div id="toast"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        await initLoginApp(); 
+        renderUsuario();
+        await carregarFavoritos();
+      });
+
+      function renderUsuario() {
+        const usuario = getUsuarioCorrente();
+        const area = document.getElementById("area-usuario");
+
+        if (usuario) {
+          area.innerHTML = `
+            <span class="navbar-user-nome">Olá, <strong>${usuario.nome.split(" ")[0]}</strong></span>
+            <span style="color:var(--cor-borda)">|</span>
+            <button class="btn-link btn-sair" onclick="logoutUser()">Sair</button>
+          `;
+        } else {
+          area.innerHTML = `<a href="/modulos/login/index.html" class="btn-link btn-entrar">Entrar</a>`;
+        }
+      }
+
+      async function carregarFavoritos() {
+        const grid = document.getElementById("grid-favoritos");
+        const idsFavoritos = getFavoritos();
+
+        if (idsFavoritos.length === 0) {
+          grid.innerHTML = `
+            <div class="favoritos-vazio" style="grid-column:1/-1">
+              <span class="icone-grande">♡</span>
+              <p>Você ainda não tem nenhum favorito.</p>
+              <a href="/index.html" class="btn-primario" style="display:inline-block;padding:0.7rem 1.5rem;border-radius:8px;background:var(--cor-acento);color:#0e0b08;font-weight:600;">
+                Explorar catálogo
+              </a>
+            </div>
+          `;
+          return;
+        }
+
+        try {
+          const response = await fetch("/itens");
+          const todosItens = await response.json();
+          const itensFavoritos = todosItens.filter((item) =>
+            idsFavoritos.includes(item.id)
+          );
+
+          grid.innerHTML = "";
+
+          itensFavoritos.forEach((item) => {
+            const card = document.createElement("article");
+            card.className = "card favorito";
+            card.dataset.id = item.id;
+
+            card.innerHTML = `
+              <img class="card-imagem" src="${item.imagem}" alt="${item.titulo}" loading="lazy" />
+              <div class="card-corpo">
+                <p class="card-categoria">${item.categoria}</p>
+                <h3 class="card-titulo">${item.titulo}</h3>
+                <p class="card-descricao">${item.descricao}</p>
+                <div class="card-rodape">
+                  <button
+                    class="btn-favorito ativo"
+                    onclick="removerFavorito(${item.id}, this)"
+                    aria-label="Remover dos favoritos"
+                  >
+                    <span class="icone">♥</span>
+                    <span class="rotulo">Favoritado</span>
+                  </button>
+                </div>
+              </div>
+            `;
+
+            grid.appendChild(card);
+          });
+        } catch (e) {
+          grid.innerHTML = '<p style="color:var(--cor-texto-suave)">Erro ao carregar itens.</p>';
+        }
+      }
+
+      function removerFavorito(id, botao) {
+        toggleFavorito(id); 
+        const card = botao.closest(".card");
+        card.style.transition = "opacity 0.3s, transform 0.3s";
+        card.style.opacity = "0";
+        card.style.transform = "scale(0.95)";
+        setTimeout(() => {
+          card.remove();
+          if (document.querySelectorAll(".card").length === 0) {
+            carregarFavoritos();
+          }
+        }, 300);
+        mostrarToast("Removido dos favoritos");
+      }
+
+      let toastTimeout;
+      function mostrarToast(mensagem, tipo = "sucesso") {
+        const toast = document.getElementById("toast");
+        toast.textContent = mensagem;
+        toast.className = `visivel ${tipo}`;
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+          toast.className = "";
+        }, 3000);
+      }
+    </script>
+  </body>
+</html>

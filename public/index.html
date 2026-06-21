@@ -1,13 +1,162 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="script.js"></script>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    
-</body>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Café Raízes — Catálogo</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <!-- Módulo de login (carregado primeiro) -->
+    <script src="/assets/js/login.js"></script>
+    <!-- Módulo de favoritos -->
+    <script src="/assets/js/favoritos.js"></script>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="navbar-inner">
+          <a href="/index.html" class="navbar-logo">☕ Café <span>Raízes</span></a>
+
+          <ul class="navbar-nav">
+            <li><a href="/index.html">Catálogo</a></li>
+            <li><a href="/pages/favoritos.html">Meus Favoritos</a></li>
+          </ul>
+
+          <div class="navbar-user" id="area-usuario">
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <p class="hero-eyebrow">Grãos selecionados do Brasil e do mundo</p>
+      <h1>O café que conta<br /><em>uma história</em></h1>
+      <p>Explore nosso catálogo de origens especiais e guarde seus favoritos para sempre ter à mão.</p>
+    </section>
+
+    <main class="secao-catalogo">
+      <h2 class="secao-titulo">Catálogo</h2>
+      <div class="grid-cards" id="grid-cards">
+      </div>
+    </main>
+
+    <footer>
+      <p>© 2025 Café Raízes · Projeto acadêmico</p>
+    </footer>
+
+    <div id="toast"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        await initLoginApp(); // redireciona para login se não autenticado
+        renderUsuario();
+        await carregarItens();
+      });
+
+      function renderUsuario() {
+        const usuario = getUsuarioCorrente();
+        const area = document.getElementById("area-usuario");
+
+        if (usuario) {
+          area.innerHTML = `
+            <span class="navbar-user-nome">Olá, <strong>${usuario.nome.split(" ")[0]}</strong></span>
+            <span style="color:var(--cor-borda)">|</span>
+            <button class="btn-link btn-sair" onclick="logoutUser()">Sair</button>
+          `;
+        } else {
+          area.innerHTML = `
+            <a href="/modulos/login/index.html" class="btn-link btn-entrar">Entrar</a>
+          `;
+        }
+      }
+
+      async function carregarItens() {
+        try {
+          const response = await fetch("/itens");
+          const itens = await response.json();
+          renderCards(itens);
+        } catch (e) {
+          document.getElementById("grid-cards").innerHTML =
+            '<p style="color:var(--cor-texto-suave)">Erro ao carregar itens. Verifique se o JSON Server está rodando.</p>';
+        }
+      }
+
+      function renderCards(itens) {
+        const grid = document.getElementById("grid-cards");
+        grid.innerHTML = "";
+
+        itens.forEach((item) => {
+          const fav = isFavorito(item.id);
+          const card = document.createElement("article");
+          card.className = `card${fav ? " favorito" : ""}`;
+          card.dataset.id = item.id;
+
+          card.innerHTML = `
+            <img class="card-imagem" src="${item.imagem}" alt="${item.titulo}" loading="lazy" />
+            <div class="card-corpo">
+              <p class="card-categoria">${item.categoria}</p>
+              <h3 class="card-titulo">${item.titulo}</h3>
+              <p class="card-descricao">${item.descricao}</p>
+              <div class="card-rodape">
+                <button
+                  class="btn-favorito${fav ? " ativo" : ""}"
+                  onclick="handleFavorito(${item.id}, this)"
+                  aria-label="${fav ? "Remover dos favoritos" : "Adicionar aos favoritos"}"
+                >
+                  <span class="icone">${fav ? "♥" : "♡"}</span>
+                  <span class="rotulo">${fav ? "Favoritado" : "Favoritar"}</span>
+                </button>
+              </div>
+            </div>
+          `;
+
+          grid.appendChild(card);
+        });
+      }
+
+      function handleFavorito(id, botao) {
+        const usuario = getUsuarioCorrente();
+
+        if (!usuario) {
+          mostrarToast("Faça login para favoritar itens.", "erro");
+          setTimeout(() => {
+            window.location.href = "/modulos/login/index.html";
+          }, 1500);
+          return;
+        }
+
+        const foiFavoritado = toggleFavorito(id);
+        const card = botao.closest(".card");
+        const icone = botao.querySelector(".icone");
+        const rotulo = botao.querySelector(".rotulo");
+
+        if (foiFavoritado) {
+          botao.classList.add("ativo");
+          card.classList.add("favorito");
+          icone.textContent = "♥";
+          rotulo.textContent = "Favoritado";
+          botao.setAttribute("aria-label", "Remover dos favoritos");
+          mostrarToast("Adicionado aos favoritos ♥", "sucesso");
+        } else {
+          botao.classList.remove("ativo");
+          card.classList.remove("favorito");
+          icone.textContent = "♡";
+          rotulo.textContent = "Favoritar";
+          botao.setAttribute("aria-label", "Adicionar aos favoritos");
+          mostrarToast("Removido dos favoritos", "sucesso");
+        }
+      }
+
+
+      let toastTimeout;
+      function mostrarToast(mensagem, tipo = "sucesso") {
+        const toast = document.getElementById("toast");
+        toast.textContent = mensagem;
+        toast.className = `visivel ${tipo}`;
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+          toast.className = "";
+        }, 3000);
+      }
+    </script>
+  </body>
 </html>
